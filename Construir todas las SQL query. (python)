@@ -1,0 +1,44 @@
+import pandas as pd
+
+_route_persons = "persons.csv"
+
+data = pd.read_csv(_route_persons, sep="|")
+
+
+_sql_tabla_encabezado_produts = "create table persons(\nid number primary key,\n"
+_sql_datos_tabla_produts = ""
+_sql_fin_tabla = "\n);"
+
+for i in data.columns:
+    _sql_datos_tabla_produts = _sql_datos_tabla_produts + str(i) + " " + "varchar2(100),\n"
+
+# Borrar coma y salto de linea
+_sql_datos_tabla_produts = _sql_datos_tabla_produts[0:-2]
+
+# tabla products
+print(_sql_tabla_encabezado_produts + _sql_datos_tabla_produts + _sql_fin_tabla)
+
+
+_sql_insert_products_cabeza = "insert into persons values("
+_sql_insert_products_final = ");\n"
+
+_sql_todos_producto_insertar = ""
+
+
+counter = 1
+for key, data in data.iterrows():
+    _sql_cuerpo_insert_products = str(counter) + ","
+    for i in data:
+        
+        _sql_cuerpo_insert_products = _sql_cuerpo_insert_products + "\'" + str(i) + "\'" + ","
+        counter = counter + 1
+    _sql_cuerpo_insert_products = _sql_cuerpo_insert_products[:-1]
+
+    _sql_todos_producto_insertar = _sql_todos_producto_insertar + _sql_insert_products_cabeza + _sql_cuerpo_insert_products + _sql_insert_products_final
+
+print(_sql_todos_producto_insertar)
+
+# Guardar en el disco duro
+
+with open("persons.sql", "w", encoding="UTF-8") as f:
+    f.write(_sql_todos_producto_insertar)
